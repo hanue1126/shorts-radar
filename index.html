@@ -113,6 +113,7 @@
     backdrop-filter: blur(4px);
   }
   .b-new { background: rgba(255,180,58,0.92); color: #1c1400; }
+  .b-gem { background: rgba(167,139,250,0.92); color: #1e1145; }
   .b-up { background: rgba(62,207,142,0.92); color: #04240f; }
   .b-down { background: rgba(0,0,0,0.6); color: #ccc; }
   .b-fire { background: rgba(255,77,77,0.92); color: #fff; }
@@ -252,11 +253,15 @@ function videoCard(v, i) {
   else if (v.rankDelta != null && v.rankDelta >= 3) badges += `<span class="b b-up">↑${v.rankDelta}</span>`;
   else if (v.rankDelta != null && v.rankDelta <= -3) badges += `<span class="b b-down">↓${-v.rankDelta}</span>`;
   if (tab === 'rising' && i < 10 && v.delta != null) badges += '<span class="b b-fire">🔥</span>';
+  if (v.outlier != null && v.outlier >= 5) {
+    badges += `<span class="b b-gem" title="구독자 대비 조회수 배율">💎${v.outlier >= 10 ? Math.round(v.outlier) : v.outlier}배</span>`;
+  }
   const delta = (v.delta != null && v.delta > 0)
     ? `<span class="delta-badge">+${formatNum(v.delta)}</span>`
     : (v.vpd && tab === 'rising' ? `<span class="delta-badge">≈${formatNum(v.vpd)}/일</span>` : '');
   const meta = [];
   if (v.channel) meta.push(esc(v.channel));
+  if (v.subs) meta.push('구독자 ' + formatNum(v.subs));
   if (v.days) meta.push(v.days + '일 전');
   return `
   <a class="card" href="https://www.youtube.com/shorts/${esc(v.id)}" target="_blank" rel="noopener">
@@ -319,6 +324,7 @@ function render() {
       html += `<select id="sortSel">
         <option value="score" ${sortMode === 'score' ? 'selected' : ''}>급상승순</option>
         <option value="views" ${sortMode === 'views' ? 'selected' : ''}>총 조회수순</option>
+        <option value="outlier" ${sortMode === 'outlier' ? 'selected' : ''}>💎 떡상 지수순</option>
       </select>`;
     }
   }
@@ -330,6 +336,7 @@ function render() {
   } else {
     let vids = D.recent.filter(matchesFilter);
     if (sortMode === 'views') vids = [...vids].sort((a, b) => b.views - a.views);
+    if (sortMode === 'outlier') vids = D.recent.filter(matchesFilter).filter(v => v.outlier != null).sort((a, b) => b.outlier - a.outlier);
     if (!vids.length) {
       html += '<div class="board-empty">조건에 맞는 쇼츠가 없습니다.</div>';
     } else {
@@ -458,6 +465,7 @@ function renderGridOnly() {
   const D = window.RADAR_DATA;
   let vids = D.recent.filter(matchesFilter);
   if (sortMode === 'views') vids = [...vids].sort((a, b) => b.views - a.views);
+  if (sortMode === 'outlier') vids = vids.filter(v => v.outlier != null).sort((a, b) => b.outlier - a.outlier);
   const grid = app.querySelector('.grid');
   const empty = app.querySelector('.board-empty');
   const target = grid || empty;
