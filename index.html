@@ -47,6 +47,10 @@
     background: var(--accent-soft); color: var(--accent); border-radius: 10px;
     font-size: 13px; padding: 8px 14px; margin: 10px 0 4px; display: inline-block;
   }
+  .info-note {
+    background: rgba(167,139,250,0.12); color: #8b6ef3; border-radius: 10px;
+    font-size: 13px; padding: 10px 14px; margin: 0 0 14px; line-height: 1.6;
+  }
 
   /* ── 키워드 칩 ── */
   .kw-section { margin: 18px 0 6px; }
@@ -197,7 +201,10 @@
     <span class="meta" id="genTime"></span>
   </header>
   <div id="app"></div>
-  <footer>절대 조회수가 아니라 <b>증가 속도</b> 기준 랭킹입니다 · 매일 <code>레이더-수집.command</code> 실행으로 갱신</footer>
+  <footer>
+    절대 조회수가 아니라 <b>증가 속도</b> 기준 랭킹 · 4시간마다 자동 갱신<br>
+    배지: <b>NEW</b> 오늘 첫 등장 · <b>↑↓</b> 랭킹 변동 · <b>🔥</b> 증가량 상위 · <b>💎</b> 떡상 지수(구독자 대비 조회수 배율 — 작은 채널에서 터진 영상)
+  </footer>
 </div>
 
 <script src="radar-data.js"></script>
@@ -329,6 +336,14 @@ function render() {
     }
   }
   html += '<span class="summary" id="summaryTxt"></span></div>';
+
+  // 떡상 지수 설명 (해당 정렬 선택 시)
+  if (tab === 'rising' && sortMode === 'outlier') {
+    html += `<div class="info-note">💎 <b>떡상 지수</b> = 조회수 ÷ 구독자 수.
+    채널 체급 대비 얼마나 터졌는지를 보여줍니다. 예를 들어 구독자 1만 채널이 100만 뷰를 찍으면 지수 100배 —
+    채널 파워가 아니라 <b>소재의 힘</b>으로 터진 영상이라 벤치마킹 가치가 높아요.
+    (구독자 1천 명·조회수 10만 이상 영상만 집계, 구독자 수는 어림값이라 지수는 근사치입니다)</div>`;
+  }
 
   // 본문
   if (tab === 'board') {
