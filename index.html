@@ -105,14 +105,15 @@
   .thumb-box { position: relative; aspect-ratio: 9/16; background: var(--surface2); }
   .thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card-strip {
-    display: flex; align-items: center; gap: 4px; padding: 8px 8px 0 10px;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 1;
+    display: flex; align-items: center; gap: 4px; padding: 7px 7px 16px 8px;
     white-space: nowrap; overflow: hidden;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0));
   }
   .rank {
     flex: none; background: rgba(0,0,0,0.75); color: #fff; font-weight: 800; font-size: 12px;
     border-radius: 8px; padding: 1px 8px;
   }
-  @media (prefers-color-scheme: light) { .rank { background: #3a4150; } }
   .rank.top1 { background: var(--gold); color: #1c1400; }
   .rank.top2, .rank.top3 { background: rgba(255,180,58,0.9); color: #1c1400; }
   .b {
@@ -142,8 +143,9 @@
   .star-btn {
     flex: none; margin-left: auto; width: 24px; height: 24px;
     border: none; border-radius: 50%; background: transparent;
-    color: var(--text-dim); font-size: 16px; cursor: pointer;
+    color: rgba(255,255,255,0.85); font-size: 16px; cursor: pointer;
     display: flex; align-items: center; justify-content: center; line-height: 1;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
   .star-btn:hover { color: var(--gold); }
   .star-btn.saved { color: var(--gold); }
@@ -278,13 +280,13 @@ function videoCard(v, i) {
   if (v.days) meta.push(v.days + '일 전');
   return `
   <a class="card" href="https://www.youtube.com/shorts/${esc(v.id)}" target="_blank" rel="noopener">
-    <div class="card-strip">
-      <span class="rank ${rankCls}">${i + 1}</span>${badges}
-      <button class="star-btn ${saved ? 'saved' : ''}" data-star="${esc(v.id)}" title="아이템 보드에 저장">${saved ? '★' : '☆'}</button>
-    </div>
     <div class="thumb-box">
       <img loading="lazy" src="${esc(thumbUrl(v))}" alt=""
            onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg'">
+      <div class="card-strip">
+        <span class="rank ${rankCls}">${i + 1}</span>${badges}
+        <button class="star-btn ${saved ? 'saved' : ''}" data-star="${esc(v.id)}" title="아이템 보드에 저장">${saved ? '★' : '☆'}</button>
+      </div>
       <div class="bottom-overlay">${delta}<span class="views-badge">▶ ${formatNum(v.views)}</span></div>
     </div>
     <div class="card-body">
