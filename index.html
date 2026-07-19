@@ -94,7 +94,7 @@
   .summary { margin-left: auto; font-size: 13px; color: var(--text-dim); }
 
   /* ── 카드 그리드 ── */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(164px, 1fr)); gap: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
   .card {
     background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
     overflow: hidden; text-decoration: none; color: var(--text);
@@ -104,19 +104,20 @@
   .card:hover { transform: translateY(-3px); border-color: var(--accent); }
   .thumb-box { position: relative; aspect-ratio: 9/16; background: var(--surface2); }
   .thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .top-overlay {
-    position: absolute; top: 8px; left: 8px; right: 38px;
-    display: flex; flex-wrap: wrap; gap: 4px; align-items: flex-start;
+  .card-strip {
+    display: flex; align-items: center; gap: 4px; padding: 8px 8px 0 10px;
+    white-space: nowrap; overflow: hidden;
   }
   .rank {
-    background: rgba(0,0,0,0.75); color: #fff; font-weight: 800; font-size: 12px;
-    border-radius: 8px; padding: 1px 8px; backdrop-filter: blur(4px);
+    flex: none; background: rgba(0,0,0,0.75); color: #fff; font-weight: 800; font-size: 12px;
+    border-radius: 8px; padding: 1px 8px;
   }
+  @media (prefers-color-scheme: light) { .rank { background: #3a4150; } }
   .rank.top1 { background: var(--gold); color: #1c1400; }
-  .rank.top2, .rank.top3 { background: rgba(255,180,58,0.85); color: #1c1400; }
+  .rank.top2, .rank.top3 { background: rgba(255,180,58,0.9); color: #1c1400; }
   .b {
-    font-size: 10px; font-weight: 800; border-radius: 6px; padding: 2px 6px;
-    backdrop-filter: blur(4px); white-space: nowrap;
+    flex: none; font-size: 10px; font-weight: 800; border-radius: 6px; padding: 2px 6px;
+    white-space: nowrap;
   }
   .b-new { background: rgba(255,180,58,0.92); color: #1c1400; }
   .b-gem { background: rgba(167,139,250,0.92); color: #1e1145; }
@@ -139,12 +140,12 @@
     font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   .star-btn {
-    position: absolute; top: 6px; right: 6px; width: 28px; height: 28px;
-    border: none; border-radius: 50%; background: rgba(0,0,0,0.55);
-    color: #fff; font-size: 14px; cursor: pointer; backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
+    flex: none; margin-left: auto; width: 24px; height: 24px;
+    border: none; border-radius: 50%; background: transparent;
+    color: var(--text-dim); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
   }
-  .star-btn:hover { background: rgba(0,0,0,0.8); }
+  .star-btn:hover { color: var(--gold); }
   .star-btn.saved { color: var(--gold); }
   .card-body { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
   .card-title {
@@ -261,13 +262,13 @@ function videoCard(v, i) {
   const saved = !!items[v.id];
   const rankCls = i === 0 ? 'top1' : i < 3 ? 'top' + (i + 1) : '';
   let badges = '';
+  if (v.outlier != null && v.outlier >= 5) {
+    badges += `<span class="b b-gem" title="구독자 대비 조회수 배율">💎${v.outlier >= 10 ? Math.round(v.outlier) : v.outlier}배</span>`;
+  }
   if (v.isNew) badges += '<span class="b b-new">NEW</span>';
   else if (v.rankDelta != null && v.rankDelta >= 3) badges += `<span class="b b-up">↑${v.rankDelta}</span>`;
   else if (v.rankDelta != null && v.rankDelta <= -3) badges += `<span class="b b-down">↓${-v.rankDelta}</span>`;
   if (tab === 'rising' && i < 10 && v.delta != null) badges += '<span class="b b-fire">🔥</span>';
-  if (v.outlier != null && v.outlier >= 5) {
-    badges += `<span class="b b-gem" title="구독자 대비 조회수 배율">💎${v.outlier >= 10 ? Math.round(v.outlier) : v.outlier}배</span>`;
-  }
   const delta = (v.delta != null && v.delta > 0)
     ? `<span class="delta-badge">+${formatNum(v.delta)}</span>`
     : (v.vpd && tab === 'rising' ? `<span class="delta-badge">≈${formatNum(v.vpd)}/일</span>` : '');
@@ -277,12 +278,14 @@ function videoCard(v, i) {
   if (v.days) meta.push(v.days + '일 전');
   return `
   <a class="card" href="https://www.youtube.com/shorts/${esc(v.id)}" target="_blank" rel="noopener">
+    <div class="card-strip">
+      <span class="rank ${rankCls}">${i + 1}</span>${badges}
+      <button class="star-btn ${saved ? 'saved' : ''}" data-star="${esc(v.id)}" title="아이템 보드에 저장">${saved ? '★' : '☆'}</button>
+    </div>
     <div class="thumb-box">
       <img loading="lazy" src="${esc(thumbUrl(v))}" alt=""
            onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg'">
-      <div class="top-overlay"><span class="rank ${rankCls}">${i + 1}</span>${badges}</div>
       <div class="bottom-overlay">${delta}<span class="views-badge">▶ ${formatNum(v.views)}</span></div>
-      <button class="star-btn ${saved ? 'saved' : ''}" data-star="${esc(v.id)}" title="아이템 보드에 저장">${saved ? '★' : '☆'}</button>
     </div>
     <div class="card-body">
       <div class="card-title">${esc(v.title)}</div>
