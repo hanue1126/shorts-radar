@@ -104,34 +104,39 @@
   .card:hover { transform: translateY(-3px); border-color: var(--accent); }
   .thumb-box { position: relative; aspect-ratio: 9/16; background: var(--surface2); }
   .thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .top-overlay {
+    position: absolute; top: 8px; left: 8px; right: 38px;
+    display: flex; flex-wrap: wrap; gap: 4px; align-items: flex-start;
+  }
   .rank {
-    position: absolute; top: 8px; left: 8px;
-    background: rgba(0,0,0,0.75); color: #fff; font-weight: 800; font-size: 13px;
-    border-radius: 8px; padding: 2px 9px; backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.75); color: #fff; font-weight: 800; font-size: 12px;
+    border-radius: 8px; padding: 1px 8px; backdrop-filter: blur(4px);
   }
   .rank.top1 { background: var(--gold); color: #1c1400; }
   .rank.top2, .rank.top3 { background: rgba(255,180,58,0.85); color: #1c1400; }
-  .badge-row { position: absolute; top: 8px; right: 40px; display: flex; gap: 4px; }
   .b {
-    font-size: 11px; font-weight: 800; border-radius: 6px; padding: 1px 7px;
-    backdrop-filter: blur(4px);
+    font-size: 10px; font-weight: 800; border-radius: 6px; padding: 2px 6px;
+    backdrop-filter: blur(4px); white-space: nowrap;
   }
   .b-new { background: rgba(255,180,58,0.92); color: #1c1400; }
   .b-gem { background: rgba(167,139,250,0.92); color: #1e1145; }
   .b-up { background: rgba(62,207,142,0.92); color: #04240f; }
   .b-down { background: rgba(0,0,0,0.6); color: #ccc; }
   .b-fire { background: rgba(255,77,77,0.92); color: #fff; }
+  .bottom-overlay {
+    position: absolute; bottom: 8px; left: 8px; right: 8px;
+    display: flex; flex-wrap: wrap; gap: 4px; align-items: flex-end;
+  }
   .views-badge {
-    position: absolute; bottom: 8px; right: 8px;
-    background: rgba(0,0,0,0.75); color: #fff; font-weight: 700; font-size: 12px;
+    margin-left: auto;
+    background: rgba(0,0,0,0.75); color: #fff; font-weight: 700; font-size: 11px;
     border-radius: 8px; padding: 2px 8px; backdrop-filter: blur(4px);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   .delta-badge {
-    position: absolute; bottom: 8px; left: 8px;
-    background: rgba(9, 68, 41, 0.88); color: #6effb8; font-weight: 800; font-size: 12px;
+    background: rgba(9, 68, 41, 0.88); color: #6effb8; font-weight: 800; font-size: 11px;
     border-radius: 8px; padding: 2px 8px; backdrop-filter: blur(4px);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   .star-btn {
     position: absolute; top: 6px; right: 6px; width: 28px; height: 28px;
@@ -275,10 +280,8 @@ function videoCard(v, i) {
     <div class="thumb-box">
       <img loading="lazy" src="${esc(thumbUrl(v))}" alt=""
            onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg'">
-      <span class="rank ${rankCls}">${i + 1}</span>
-      <div class="badge-row">${badges}</div>
-      ${delta}
-      <span class="views-badge">▶ ${formatNum(v.views)}</span>
+      <div class="top-overlay"><span class="rank ${rankCls}">${i + 1}</span>${badges}</div>
+      <div class="bottom-overlay">${delta}<span class="views-badge">▶ ${formatNum(v.views)}</span></div>
       <button class="star-btn ${saved ? 'saved' : ''}" data-star="${esc(v.id)}" title="아이템 보드에 저장">${saved ? '★' : '☆'}</button>
     </div>
     <div class="card-body">
