@@ -1,1 +1,1 @@
-window.RADAR_DATA = {"generatedAt": "2026-11-05 20:00", "historyDays": 8, "keywords": [], "recent": []};
+window.RADAR_DATA = {"generatedAt": "2026-11-06 00:00", "historyDays": 8, "keywords": [], "recent": []};
